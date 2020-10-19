@@ -14,6 +14,7 @@ public:
     vid_t firstsource, numsources;
     wid_t walkspersource;
     hid_t maxwalklength;
+    /* TODO: usage? */
     DiscreteDistribution *visitfrequencies;
 
     tid_t exec_threads;
@@ -47,13 +48,20 @@ public:
             if(ens > firstsource+numsources) 
                 ens = firstsource+numsources;
             logstream(LOG_INFO) << "Start walks of sources : [" << sts << ", " << ens << ") , blocks[p+1] = " << blocks[p+1] << std::endl;
+            /* 当前块内可以执行的source数量 */
             nums = ens - sts;
+            /* 当前块内的source执行完之后，还需要执行的source节点数量 */
             count -= nums;
             walk_manager.minstep[p] = 0;
             walk_manager.walknum[p] = nums*walkspersource;
             #pragma omp parallel for schedule(static)
                 for(vid_t s = 0; s < nums; s++){
+                    /**
+                     * s + sts: 当前source的编号
+                     * cur: 当前的source是当前block中的第几个节点
+                     */
                     vid_t cur = s + sts - blocks[p];
+                    /* FIXME: 为什么walk manager中，当前节点的ID是记录的相对值，即相对于block起始ID的偏移量？（起始节点也是？） */
                     WalkDataType walk = walk_manager.encode(s + sts - firstsource, cur, 0);
                     for( wid_t j = 0; j < walkspersource; j++ ){
                         walk_manager.moveWalk(walk,p,omp_get_thread_num(),cur);
