@@ -41,3 +41,10 @@ Here, we will take application `msppr` as an example to show how to run applicat
 $ cd ../
 $ LOG_LEVEL="debug" ./bin/apps/msppr file ./Dataset/soc-LiveJournal1.txt firstsource 0 numsources 1 walkspersource 2000 maxwalklength 10 prob 0.2
 ```
+
+
+msppr:
+
+Single source and multiple source personalized pagerank can both be calculated with this app.
+
+若是multiple source PPR, 需要认为给定一个first source，之后app顺序将first source及其之后的节点依次当作start source。例如，认为给定节点0作为first source，并且设定mutiple source 个数为3，则以此计算0, 1, 2的PPR value
