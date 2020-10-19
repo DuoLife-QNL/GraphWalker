@@ -6,3 +6,4 @@ graphwalker_metrics.txt.statistics
 ./monitor/*.csv
 .vscode/
 Dataset/
+GraphGenerator
