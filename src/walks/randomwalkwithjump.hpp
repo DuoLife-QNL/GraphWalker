@@ -38,7 +38,7 @@ public:
             updateInfo(sourId, dstId, threadid, hop);
             vid_t dstIdp = dstId - blocks[exec_block];
             eid_t outd = beg_pos[dstIdp+1] - beg_pos[dstIdp];
-            if (outd > 0 && (float)rand_r(&seed)/RAND_MAX > 0.15 ){
+            if (outd > 0){
                 eid_t pos = beg_pos[dstIdp] - beg_pos[0] + ((eid_t)rand_r(&seed))%outd;
                 dstId = csr[pos];
             }else{
