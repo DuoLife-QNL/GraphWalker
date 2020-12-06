@@ -267,12 +267,14 @@ public:
         /*loadOnDemand -- block loop */
         int blockcount = 0;
         while( userprogram.hasFinishedWalk(*walk_manager) ){
-            blockcount++;
-            m.start_time("1_chooseBlock");
             exec_block = blockcount % nblocks;
             m.stop_time("1_chooseBlock");
             findSubGraph(exec_block, beg_pos, csr, &nverts, &nedges);
-
+            m.start_time("1_chooseBlock");
+            blockcount++;
+            std::ofstream blockSchedule("experiment/output/iteration-sync-blockScheduler.txt", std::ofstream::app);
+            blockSchedule << exec_block << std::endl;
+            blockSchedule.close();
             /*load walks info*/
             // walk_manager->loadWalkPool(exec_block);
             wid_t nwalks; 

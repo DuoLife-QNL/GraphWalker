@@ -78,7 +78,7 @@ int main(int argc, const char ** argv) {
     metrics m("RWDomination");
     
     /* Basic arguments for application */
-    std::string filename = get_option_string("file", "../dataset/LiveJournal/soc-LiveJournal1.txt");  // Base filename
+    std::string filename = get_option_string("file", "dataset/soc-LiveJournal1.txt");  // Base filename
     unsigned N = get_option_int("N", 4847571); // Number of vertices
     unsigned R = get_option_int("R", 1); // Number of steps
     unsigned L = get_option_int("L", 6); // Number of steps per walk
