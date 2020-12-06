@@ -267,10 +267,13 @@ public:
         /*loadOnDemand -- block loop */
         int blockcount = 0;
         while( userprogram.hasFinishedWalk(*walk_manager) ){
-            blockcount++;
             m.start_time("1_chooseBlock");
             exec_block = blockcount % nblocks;
             m.stop_time("1_chooseBlock");
+            blockcount++;
+            std::ofstream blockSchedule("experiment/output/iteration-async-blockScheduler.txt", std::ofstream::app);
+            blockSchedule << exec_block << std::endl;
+            blockSchedule.close();
             findSubGraph(exec_block, beg_pos, csr, &nverts, &nedges);
 
             /*load walks info*/
