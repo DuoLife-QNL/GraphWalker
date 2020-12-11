@@ -273,6 +273,10 @@ public:
             m.stop_time("1_chooseBlock");
             findSubGraph(exec_block, beg_pos, csr, &nverts, &nedges);
 
+            std::ofstream blockSchedule("experiment/output/walk-state-aware-blockScheduler.txt", std::ofstream::app);
+            blockSchedule << exec_block << std::endl;
+            blockSchedule.close();
+
             /*load walks info*/
             // walk_manager->loadWalkPool(exec_block);
             wid_t nwalks; 
