@@ -22,6 +22,7 @@
 #include "metrics/metrics.hpp"
 #include "api/pthread_tools.hpp"
 #include "walks/randomwalk.hpp"
+#include "script/blockSeq2CSV.hpp"
 
 class graphwalker_engine {
 public:     
@@ -337,6 +338,8 @@ public:
 
         } // For block loop
         m.stop_time("00_runtime");
+        string blockIONumCSVFileName = algorBaseRoot + "block-schedule-times/blockIONum" + postfix + ".csv";
+        blockSeq2CSV(blockScheduleFileName, blockIONumCSVFileName);
     }
 };
 
