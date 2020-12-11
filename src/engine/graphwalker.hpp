@@ -266,6 +266,12 @@ public:
         eid_t nedges, *beg_pos;
         /*loadOnDemand -- block loop */
         int blockcount = 0;
+        std::string algorBaseRoot = "experiment/output/iteration-async/";
+        std::string postfix = "(skip-empty)";
+        std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
+        std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
+        remove(blockScheduleFileName.c_str());
+        remove(walkPerExecBlockFileName.c_str());
         while( userprogram.hasFinishedWalk(*walk_manager) ){
             m.start_time("1_chooseBlock");
             exec_block = blockcount % nblocks;
@@ -273,15 +279,20 @@ public:
             blockcount++;
             if (walk_manager->walknum[exec_block] == 0)
                 continue;
-            std::ofstream blockSchedule("experiment/output/iteration-async-blockScheduler.txt", std::ofstream::app);
+
+            findSubGraph(exec_block, beg_pos, csr, &nverts, &nedges);
+
+            std::ofstream blockSchedule(blockScheduleFileName, std::ofstream::app);
             blockSchedule << exec_block << std::endl;
             blockSchedule.close();
-            findSubGraph(exec_block, beg_pos, csr, &nverts, &nedges);
 
             /*load walks info*/
             // walk_manager->loadWalkPool(exec_block);
             wid_t nwalks;
             nwalks = walk_manager->getCurrentWalks(exec_block);
+            std::ofstream nWalkFile(walkPerExecBlockFileName, std::ofstream::app);
+            nWalkFile << nwalks << std::endl;
+            nWalkFile.close();
 
             // if(blockcount % (nblocks/100+1)==1)
             if(blockcount % (1024*1024*1024/nedges+1) == 1)
