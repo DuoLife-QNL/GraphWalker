@@ -270,8 +270,26 @@ public:
         std::string postfix = "(skip-empty)";
         std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
         std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
+        std::string walkPerVertexFileName = algorBaseRoot + "walk-per-vertex-each-exec/walkDistribution" + postfix + ".csv";
         remove(blockScheduleFileName.c_str());
         remove(walkPerExecBlockFileName.c_str());
+        remove(walkPerVertexFileName.c_str());
+
+        std::ofstream vertexWalkNumFile(walkPerVertexFileName);
+        vertexWalkNumFile << "Block IO Num," << "Block ID," << "current vertex ID," << "walk num" << std::endl;
+        vertexWalkNumFile.close();
+
+        int maxBlockIO = static_cast<int>(nblocks) * userprogram.L;
+        int statisticPointNum = 5;
+        double diff = 1.0 / statisticPointNum;
+        std::vector<int>statisticPoint;
+
+        double percent = diff;
+        while (percent < 1.0){
+            statisticPoint.push_back(static_cast<int>(percent * maxBlockIO));
+            percent += diff;
+        }
+
         while( userprogram.hasFinishedWalk(*walk_manager) ){
             blockcount++;
             m.start_time("1_chooseBlock");
@@ -288,6 +306,17 @@ public:
             // walk_manager->loadWalkPool(exec_block);
             wid_t nwalks;
             nwalks = walk_manager->getCurrentWalks(exec_block);
+
+            if (std::find(statisticPoint.begin(), statisticPoint.end(), blockcount) != statisticPoint.end()){
+                std::vector<int> vertexWalkNum(nverts, 0);
+                walk_manager->curBlockVertexWalkNum(exec_block, vertexWalkNum);
+                vertexWalkNumFile.open(walkPerVertexFileName, std::ofstream::app);
+                for (vid_t curVertex = 0; curVertex < nverts; curVertex++){
+                    vertexWalkNumFile << blockcount << "," << exec_block << "," << curVertex << "," << vertexWalkNum[curVertex] << std::endl;
+                }
+                vertexWalkNumFile.close();
+            }
+
             std::ofstream nWalkFile(walkPerExecBlockFileName, std::ofstream::app);
             nWalkFile << nwalks << std::endl;
             nWalkFile.close();

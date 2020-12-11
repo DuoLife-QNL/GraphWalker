@@ -133,6 +133,16 @@ public:
 		return count;
 	}
 
+	void curBlockVertexWalkNum(bid_t p, std::vector<int> &vertexWalkNum){
+	    WalkDataType walk;
+	    vid_t resideVertex;
+	    for (wid_t w = 0; w < walknum[p]; w++){
+	        walk = curwalks[w];
+	        resideVertex = getCurrentId(walk);
+	        vertexWalkNum[resideVertex]++;
+	    }
+	}
+
 	void readWalksfromDisk(bid_t p){
 		m.start_time("z_w_readWalksfromDisk");
 
