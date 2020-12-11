@@ -1,3 +1,8 @@
 
 # GraphWalker configuration.
 # Commandline parameters override values in the configuration file.
+file=dataset/soc-LiveJournal1.txt
+blocksize_kb=20000
+nmblocks=1
+R=3
+L=20
