@@ -271,6 +271,8 @@ public:
             exec_block = blockcount % nblocks;
             m.stop_time("1_chooseBlock");
             blockcount++;
+            if (walk_manager->walknum[exec_block] == 0)
+                continue;
             std::ofstream blockSchedule("experiment/output/iteration-async-blockScheduler.txt", std::ofstream::app);
             blockSchedule << exec_block << std::endl;
             blockSchedule.close();
@@ -278,9 +280,9 @@ public:
 
             /*load walks info*/
             // walk_manager->loadWalkPool(exec_block);
-            wid_t nwalks; 
+            wid_t nwalks;
             nwalks = walk_manager->getCurrentWalks(exec_block);
-            
+
             // if(blockcount % (nblocks/100+1)==1)
             if(blockcount % (1024*1024*1024/nedges+1) == 1)
             {
