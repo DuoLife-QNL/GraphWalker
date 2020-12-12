@@ -266,8 +266,8 @@ public:
         eid_t nedges, *beg_pos;
         /*loadOnDemand -- block loop */
         int blockcount = 0;
-        std::string algorBaseRoot = "experiment/output/iteration-async/";
-        std::string postfix = "(skip-empty)";
+        std::string algorBaseRoot = "experiment/output/walk-state-aware/";
+        std::string postfix = "(p = "  + std::to_string(prob) + ")";
         std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
         std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
         std::string walkPerVertexFileName = algorBaseRoot + "walk-per-vertex-each-exec/walkDistribution" + postfix + ".csv";
@@ -295,7 +295,6 @@ public:
             m.start_time("1_chooseBlock");
             exec_block = walk_manager->chooseBlock(prob);
             m.stop_time("1_chooseBlock");
-            findSubGraph(exec_block, beg_pos, csr, &nverts, &nedges);
 
             std::ofstream blockSchedule(blockScheduleFileName, std::ofstream::app);
             blockSchedule << exec_block << std::endl;
