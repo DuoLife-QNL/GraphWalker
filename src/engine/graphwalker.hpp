@@ -268,7 +268,22 @@ public:
         /*loadOnDemand -- block loop */
         int blockcount = 0;
         std::string algorBaseRoot = "experiment/output/iteration-async/";
-        std::string postfix = "(skip-empty)";
+        std::string R = std::to_string(userprogram.R);
+        std::string L = std::to_string(userprogram.L);
+        std::stringstream ss(base_filename);
+        std::string graphPath;
+        std::getline(ss, graphPath, '.');
+
+        std::string segment;
+        std::vector<std::string> seglist;
+
+        std::stringstream gss(graphPath);
+        while(std::getline(gss, segment, '/')){
+            seglist.push_back(segment);
+        }
+        auto graph = seglist.back();
+
+        std::string postfix = "(skip empty,"  + R + ',' + L + ',' + graph + ')';
         std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
         std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
         std::string walkPerVertexFileName = algorBaseRoot + "walk-per-vertex-each-exec/walkDistribution" + postfix + ".csv";
