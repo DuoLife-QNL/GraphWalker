@@ -283,7 +283,7 @@ public:
         }
         auto graph = seglist.back();
 
-        std::string postfix = "(skip empty,"  + R + ',' + L + ',' + graph + ')';
+        std::string postfix = '('  + R + ',' + L + ',' + graph + ')';
         std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
         std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
         std::string walkPerVertexFileName = algorBaseRoot + "walk-per-vertex-each-exec/walkDistribution" + postfix + ".csv";
@@ -311,8 +311,6 @@ public:
             exec_block = blockcount % nblocks;
             m.stop_time("1_chooseBlock");
             blockcount++;
-            if (walk_manager->walknum[exec_block] == 0)
-                continue;
 
             findSubGraph(exec_block, beg_pos, csr, &nverts, &nedges);
 
