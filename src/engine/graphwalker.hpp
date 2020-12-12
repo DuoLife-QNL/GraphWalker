@@ -271,8 +271,23 @@ public:
         std::string algorBaseRoot = "experiment/output/walk-state-aware/";
         std::stringstream stream;
         stream << std::fixed << std::setprecision(2) << prob;
-        std::string s = stream.str();
-        std::string postfix = "(p = "  + s + ")";
+        std::string p = stream.str();
+        std::string R = std::to_string(userprogram.R);
+        std::string L = std::to_string(userprogram.L);
+        std::stringstream ss(base_filename);
+        std::string graphPath;
+        std::getline(ss, graphPath, '.');
+
+        std::string segment;
+        std::vector<std::string> seglist;
+
+        std::stringstream gss(graphPath);
+        while(std::getline(gss, segment, '/')){
+            seglist.push_back(segment);
+        }
+        auto graph = seglist.back();
+
+        std::string postfix = '('  + p + ',' + R + ',' + L + ',' + graph + ')';
         std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
         std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
         std::string walkPerVertexFileName = algorBaseRoot + "walk-per-vertex-each-exec/walkDistribution" + postfix + ".csv";
