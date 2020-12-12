@@ -270,14 +270,8 @@ public:
         std::string postfix = "(skip-empty)";
         std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
         std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
-        std::string totStepsEachBlockFileName = algorBaseRoot + "tot-step-each-block-perIO/totSteps" + postfix + ".csv";
         remove(blockScheduleFileName.c_str());
         remove(walkPerExecBlockFileName.c_str());
-        remove(totStepsEachBlockFileName.c_str());
-        std::ofstream totStepFile(totStepsEachBlockFileName);
-        totStepFile << "BlockIONum," << "BlockID," << "Total Step Num" << std::endl;
-        totStepFile.close();
-
         while( userprogram.hasFinishedWalk(*walk_manager) ){
             m.start_time("1_chooseBlock");
             exec_block = blockcount % nblocks;
@@ -287,12 +281,6 @@ public:
                 continue;
 
             findSubGraph(exec_block, beg_pos, csr, &nverts, &nedges);
-
-            totStepFile.open(totStepsEachBlockFileName, std::ofstream::app);
-            for (bid_t b = 0; b < walk_manager->totSteps.size(); b++){
-                totStepFile << blockcount << "," << b << "," << walk_manager->totSteps[b] << std::endl;
-            }
-            totStepFile.close();
 
             std::ofstream blockSchedule(blockScheduleFileName, std::ofstream::app);
             blockSchedule << exec_block << std::endl;
