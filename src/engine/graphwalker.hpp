@@ -15,6 +15,7 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <asm/mman.h>
+#include <iomanip>
 
 #include "api/filename.hpp"
 #include "api/io.hpp"
@@ -268,7 +269,10 @@ public:
         /*loadOnDemand -- block loop */
         int blockcount = 0;
         std::string algorBaseRoot = "experiment/output/walk-state-aware/";
-        std::string postfix = "(p = "  + std::to_string(prob) + ")";
+        std::stringstream stream;
+        stream << std::fixed << std::setprecision(2) << prob;
+        std::string s = stream.str();
+        std::string postfix = "(p = "  + s + ")";
         std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
         std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
         std::string walkPerVertexFileName = algorBaseRoot + "walk-per-vertex-each-exec/walkDistribution" + postfix + ".csv";
