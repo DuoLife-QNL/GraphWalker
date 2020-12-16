@@ -7,3 +7,4 @@ graphwalker_metrics.txt.statistics
 .vscode/
 Dataset/
 GraphGenerator
+/dataset/
