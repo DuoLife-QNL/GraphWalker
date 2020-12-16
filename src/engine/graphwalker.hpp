@@ -268,47 +268,47 @@ public:
         eid_t nedges, *beg_pos;
         /*loadOnDemand -- block loop */
         int blockcount = 0;
-        std::string algorBaseRoot = "experiment/output/walk-state-aware/";
-        std::stringstream stream;
-        stream << std::fixed << std::setprecision(2) << prob;
-        std::string p = stream.str();
-        std::string R = std::to_string(userprogram.R);
-        std::string L = std::to_string(userprogram.L);
-        std::stringstream ss(base_filename);
-        std::string graphPath;
-        std::getline(ss, graphPath, '.');
-
-        std::string segment;
-        std::vector<std::string> seglist;
-
-        std::stringstream gss(graphPath);
-        while(std::getline(gss, segment, '/')){
-            seglist.push_back(segment);
-        }
-        auto graph = seglist.back();
-
-        std::string postfix = '('  + p + ',' + R + ',' + L + ',' + graph + ')';
-        std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
-        std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
-        std::string walkPerVertexFileName = algorBaseRoot + "walk-per-vertex-each-exec/walkDistribution" + postfix + ".csv";
-        remove(blockScheduleFileName.c_str());
-        remove(walkPerExecBlockFileName.c_str());
-        remove(walkPerVertexFileName.c_str());
-
-        std::ofstream vertexWalkNumFile(walkPerVertexFileName);
-        vertexWalkNumFile << "Block IO Num," << "Block ID," << "current vertex ID," << "walk num" << std::endl;
-        vertexWalkNumFile.close();
-
-        int maxBlockIO = static_cast<int>(nblocks) * userprogram.L;
-        int statisticPointNum = 5;
-        double diff = 1.0 / statisticPointNum;
-        std::vector<int>statisticPoint;
-
-        double percent = diff;
-        while (percent < 1.0){
-            statisticPoint.push_back(static_cast<int>(percent * maxBlockIO));
-            percent += diff;
-        }
+//        std::string algorBaseRoot = "experiment/output/walk-state-aware/";
+//        std::stringstream stream;
+//        stream << std::fixed << std::setprecision(2) << prob;
+//        std::string p = stream.str();
+//        std::string R = std::to_string(userprogram.R);
+//        std::string L = std::to_string(userprogram.L);
+//        std::stringstream ss(base_filename);
+//        std::string graphPath;
+//        std::getline(ss, graphPath, '.');
+//
+//        std::string segment;
+//        std::vector<std::string> seglist;
+//
+//        std::stringstream gss(graphPath);
+//        while(std::getline(gss, segment, '/')){
+//            seglist.push_back(segment);
+//        }
+//        auto graph = seglist.back();
+//
+//        std::string postfix = '('  + p + ',' + R + ',' + L + ',' + graph + ')';
+//        std::string blockScheduleFileName = algorBaseRoot + "block-schedule-sequence/seq" + postfix + ".txt";
+//        std::string walkPerExecBlockFileName = algorBaseRoot + "walk-per-exec-block/nWalk" + postfix + ".txt";
+//        std::string walkPerVertexFileName = algorBaseRoot + "walk-per-vertex-each-exec/walkDistribution" + postfix + ".csv";
+//        remove(blockScheduleFileName.c_str());
+//        remove(walkPerExecBlockFileName.c_str());
+//        remove(walkPerVertexFileName.c_str());
+//
+//        std::ofstream vertexWalkNumFile(walkPerVertexFileName);
+//        vertexWalkNumFile << "Block IO Num," << "Block ID," << "current vertex ID," << "walk num" << std::endl;
+//        vertexWalkNumFile.close();
+//
+//        int maxBlockIO = static_cast<int>(nblocks) * userprogram.L;
+//        int statisticPointNum = 5;
+//        double diff = 1.0 / statisticPointNum;
+//        std::vector<int>statisticPoint;
+//
+//        double percent = diff;
+//        while (percent < 1.0){
+//            statisticPoint.push_back(static_cast<int>(percent * maxBlockIO));
+//            percent += diff;
+//        }
 
         while( userprogram.hasFinishedWalk(*walk_manager) ){
             blockcount++;
@@ -316,9 +316,9 @@ public:
             exec_block = walk_manager->chooseBlock(prob);
             m.stop_time("1_chooseBlock");
 
-            std::ofstream blockSchedule(blockScheduleFileName, std::ofstream::app);
-            blockSchedule << exec_block << std::endl;
-            blockSchedule.close();
+//            std::ofstream blockSchedule(blockScheduleFileName, std::ofstream::app);
+//            blockSchedule << exec_block << std::endl;
+//            blockSchedule.close();
             findSubGraph(exec_block, beg_pos, csr, &nverts, &nedges);
 
             /*load walks info*/
@@ -326,19 +326,19 @@ public:
             wid_t nwalks;
             nwalks = walk_manager->getCurrentWalks(exec_block);
 
-            if (std::find(statisticPoint.begin(), statisticPoint.end(), blockcount) != statisticPoint.end()){
-                std::vector<int> vertexWalkNum(nverts, 0);
-                walk_manager->curBlockVertexWalkNum(exec_block, vertexWalkNum);
-                vertexWalkNumFile.open(walkPerVertexFileName, std::ofstream::app);
-                for (vid_t curVertex = 0; curVertex < nverts; curVertex++){
-                    vertexWalkNumFile << blockcount << "," << exec_block << "," << curVertex << "," << vertexWalkNum[curVertex] << std::endl;
-                }
-                vertexWalkNumFile.close();
-            }
-
-            std::ofstream nWalkFile(walkPerExecBlockFileName, std::ofstream::app);
-            nWalkFile << nwalks << std::endl;
-            nWalkFile.close();
+//            if (std::find(statisticPoint.begin(), statisticPoint.end(), blockcount) != statisticPoint.end()){
+//                std::vector<int> vertexWalkNum(nverts, 0);
+//                walk_manager->curBlockVertexWalkNum(exec_block, vertexWalkNum);
+//                vertexWalkNumFile.open(walkPerVertexFileName, std::ofstream::app);
+//                for (vid_t curVertex = 0; curVertex < nverts; curVertex++){
+//                    vertexWalkNumFile << blockcount << "," << exec_block << "," << curVertex << "," << vertexWalkNum[curVertex] << std::endl;
+//                }
+//                vertexWalkNumFile.close();
+//            }
+//
+//            std::ofstream nWalkFile(walkPerExecBlockFileName, std::ofstream::app);
+//            nWalkFile << nwalks << std::endl;
+//            nWalkFile.close();
 
             // if(blockcount % (nblocks/100+1)==1)
             if(blockcount % (1024*1024*1024/nedges+1) == 1)
@@ -354,8 +354,8 @@ public:
 
         } // For block loop
         m.stop_time("00_runtime");
-        string blockIONumCSVFileName = algorBaseRoot + "block-schedule-times/blockIONum" + postfix + ".csv";
-        blockSeq2CSV(blockScheduleFileName, blockIONumCSVFileName);
+//        string blockIONumCSVFileName = algorBaseRoot + "block-schedule-times/blockIONum" + postfix + ".csv";
+//        blockSeq2CSV(blockScheduleFileName, blockIONumCSVFileName);
     }
 };
 
