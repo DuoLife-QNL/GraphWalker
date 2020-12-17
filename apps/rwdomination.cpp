@@ -67,16 +67,11 @@ public:
 
 };
 
-
-int main(int argc, const char ** argv) {
-    /* GraphChi initialization will read the command line
-     arguments and the configuration file. */
-    set_argc(argc, argv);
-    
+metrics runProgram(){
     /* Metrics object for keeping track of performance count_invectorers
      and other information. Currently required. */
     metrics m("RWDomination");
-    
+
     /* Basic arguments for application */
     std::string filename = get_option_string("file", "../dataset/LiveJournal/soc-LiveJournal1.txt");  // Base filename
     unsigned N = get_option_int("N", 4847571); // Number of vertices
@@ -85,7 +80,7 @@ int main(int argc, const char ** argv) {
     float prob = get_option_float("prob", 0.2); // prob of chose min step
     unsigned long long blocksize_kb = get_option_long("blocksize_kb", 0); // Size of block, represented in KB
     bid_t nmblocks = get_option_int("nmblocks", 0); // number of in-memory blocks
-    
+
     /* Run */
     RandomWalkDomination program;
     program.initializeApp( N, R, L, filename );
@@ -100,7 +95,94 @@ int main(int argc, const char ** argv) {
     graphwalker_engine engine(filename, blocksize_kb, nblocks,nmblocks, m);
     engine.run(program, prob);
 
-    /* Report execution metrics */
-    metrics_report(m);
+    return m;
+//    /* Report execution metrics */
+//    metrics_report(m);
+}
+
+const vector<std::string>itemName{
+    "00_runtime",
+    "0_startWalks",
+    "g_loadSubGraph",
+    "z_w_readWalksfromDisk",
+    "4_writeWalks2Disk",
+    "5_exec_updates"
+};
+
+const vector<string>displayName{
+    "total time",
+    "start walks time",
+    "block IO",
+    "walk pool I",
+    "walk pool O",
+    "exec update"
+};
+
+class Unit{
+public:
+    double time;
+    size_t count;
+    Unit(double _time, size_t _count){
+        time = _time;
+        count = _count;
+    }
+};
+
+class OneExec{
+public:
+    vector<Unit>result;
+
+    explicit OneExec(metrics &m){
+
+        for (const auto& s:itemName){
+            double time = m.get(s).value;
+            size_t count = m.get(s).count;
+            result.emplace_back(time, count);
+        }
+    }
+};
+
+class MetricResult{
+public:
+    vector<OneExec>results;
+
+    void addResult(metrics &m){
+        results.emplace_back(OneExec(m));
+    }
+
+    Unit getAvg(int itemId){
+        double time = 0;
+        double count = 0;
+        int round = results.size();
+        for (const auto& r: results){
+            time += r.result.at(itemId).time / round;
+            count += static_cast<double>(r.result.at(itemId).count) / round;
+        }
+        return {time, static_cast<size_t>(count)};
+    }
+
+    void show(){
+        for (int i = 0; i < itemName.size(); i++){
+            Unit itemAvg(getAvg(i));
+            cout << displayName.at(i) << ": " << itemAvg.time << "  " << itemAvg.count << endl;
+        }
+    }
+
+};
+
+
+int main(int argc, const char ** argv) {
+    /* GraphChi initialization will read the command line
+     arguments and the configuration file. */
+    set_argc(argc, argv);
+    tid_t nthreads = get_option_int("execthreads", omp_get_max_threads());
+    MetricResult metricResult;
+    for (int round = 0; round < 5; round++){
+        omp_set_num_threads(nthreads);
+        metrics m = runProgram();
+        metricResult.addResult(m);
+    }
+    metricResult.show();
+
     return 0;
 }
