@@ -166,6 +166,10 @@ public:
         results.emplace_back(OneExec(m, nThreads));
     }
 
+    OneExec getResult(int round){
+        return results.at(round);
+    }
+
     Unit getAvg(int itemId){
         double time = 0;
         double count = 0;
@@ -200,6 +204,11 @@ int main(int argc, const char ** argv) {
         metricResult.addResult(m);
     }
     metricResult.show();
+
+    for (int round = 0; round < execRound; round++){
+        double runTime = metricResult.getResult(round).result.at(0).time;
+        cout << "round " << round << " run time: " << runTime << endl;
+    }
 
     return 0;
 }
