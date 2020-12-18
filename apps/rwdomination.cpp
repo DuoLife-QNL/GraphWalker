@@ -105,7 +105,7 @@ const vector<std::string>itemName{
     "0_startWalks",
     "g_loadSubGraph",
     "z_w_readWalksfromDisk",
-    "4_writeWalks2Disk",
+    "4_writeWalks2Disk_",
     "5_exec_updates"
 };
 
@@ -131,23 +131,39 @@ public:
 class OneExec{
 public:
     vector<Unit>result;
+    tid_t nThreads;
 
-    explicit OneExec(metrics &m){
-
+    explicit OneExec(metrics &m, tid_t _nThreads){
+        nThreads = _nThreads;
         for (const auto& s:itemName){
-            double time = m.get(s).value;
-            size_t count = m.get(s).count;
+            double time = 0;
+            size_t count = 0;
+            if (s == "4_writeWalks2Disk_"){
+                for (tid_t t = 0; t < nThreads; t++){
+                    time += m.get(s + std::to_string(t)).value;
+                    count += m.get(s + std::to_string(t)).count;
+                }
+            }else{
+                time = m.get(s).value;
+                count = m.get(s).count;
+            }
             result.emplace_back(time, count);
         }
     }
 };
 
 class MetricResult{
+private:
+    int nThreads;
 public:
     vector<OneExec>results;
 
+    explicit MetricResult(tid_t _nThreads){
+        nThreads = _nThreads;
+    }
+
     void addResult(metrics &m){
-        results.emplace_back(OneExec(m));
+        results.emplace_back(OneExec(m, nThreads));
     }
 
     Unit getAvg(int itemId){
@@ -176,8 +192,9 @@ int main(int argc, const char ** argv) {
      arguments and the configuration file. */
     set_argc(argc, argv);
     tid_t nthreads = get_option_int("execthreads", omp_get_max_threads());
-    MetricResult metricResult;
-    for (int round = 0; round < 5; round++){
+    MetricResult metricResult(nthreads);
+    int execRound = 5;
+    for (int round = 0; round < execRound; round++){
         omp_set_num_threads(nthreads);
         metrics m = runProgram();
         metricResult.addResult(m);
