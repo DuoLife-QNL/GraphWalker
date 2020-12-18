@@ -197,8 +197,9 @@ int main(int argc, const char ** argv) {
     set_argc(argc, argv);
     tid_t nthreads = get_option_int("execthreads", omp_get_max_threads());
     MetricResult metricResult(nthreads);
-    int execRound = 5;
+    int execRound = 12;
     for (int round = 0; round < execRound; round++){
+        system("script/test/clear_system_cache.sh");
         omp_set_num_threads(nthreads);
         metrics m = runProgram();
         metricResult.addResult(m);
