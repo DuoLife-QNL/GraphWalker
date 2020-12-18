@@ -100,7 +100,7 @@ metrics runProgram(){
 //    metrics_report(m);
 }
 
-const vector<std::string>itemName{
+const std::vector<std::string>itemName{
     "00_runtime",
     "0_startWalks",
     "g_loadSubGraph",
@@ -109,7 +109,7 @@ const vector<std::string>itemName{
     "5_exec_updates"
 };
 
-const vector<string>displayName{
+const std::vector<std::string>displayName{
     "total time",
     "start walks time",
     "block IO",
@@ -130,7 +130,7 @@ public:
 
 class OneExec{
 public:
-    vector<Unit>result;
+    std::vector<Unit>result;
     tid_t nThreads;
 
     explicit OneExec(metrics &m, tid_t _nThreads){
@@ -156,7 +156,7 @@ class MetricResult{
 private:
     int nThreads;
 public:
-    vector<OneExec>results;
+    std::vector<OneExec>results;
 
     explicit MetricResult(tid_t _nThreads){
         nThreads = _nThreads;
@@ -184,7 +184,7 @@ public:
     void show(){
         for (int i = 0; i < itemName.size(); i++){
             Unit itemAvg(getAvg(i));
-            cout << displayName.at(i) << ": " << itemAvg.time << "  " << itemAvg.count << endl;
+            std::cout << displayName.at(i) << ": " << itemAvg.time << "  " << itemAvg.count << std::endl;
         }
     }
 
@@ -207,7 +207,7 @@ int main(int argc, const char ** argv) {
 
     for (int round = 0; round < execRound; round++){
         double runTime = metricResult.getResult(round).result.at(0).time;
-        cout << "round " << round << " run time: " << runTime << endl;
+        std::cout << "round " << round << " run time: " << runTime << std::endl;
     }
 
     return 0;
