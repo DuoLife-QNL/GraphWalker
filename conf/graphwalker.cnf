@@ -4,5 +4,5 @@
 file=dataset/soc-LiveJournal1.txt.unDir
 blocksize_kb=20000
 nmblocks=1
-R=3
-L=20
+R=5
+L=50
