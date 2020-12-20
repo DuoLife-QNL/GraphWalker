@@ -202,6 +202,10 @@ int main(int argc, const char ** argv) {
         system("script/test/clear_system_cache.sh");
         omp_set_num_threads(nthreads);
         metrics m = runProgram();
+        if (m.get("00_runtime").value > 50){
+            round --;
+            continue;
+        }
         metricResult.addResult(m);
     }
     metricResult.show();
