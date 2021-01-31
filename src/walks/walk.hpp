@@ -33,6 +33,8 @@ public:
 
 	bool* ismodified;
 
+	std::vector<metrics> metric;
+
 public:
 	WalkManager(metrics &_m,bid_t _nblocks, tid_t _nthreads, std::string _base_filename):base_filename(_base_filename), nblocks(_nblocks), nthreads(_nthreads), m(_m){
 		pwalks = new WalkBuffer*[nthreads];
@@ -52,6 +54,13 @@ public:
 
 		ismodified = (bool*)malloc(nblocks*sizeof(bool));
 		memset(ismodified, false, nblocks*sizeof(bool));
+
+
+        tid_t nThreads = omp_get_max_threads();
+        for (tid_t t = 0; t < nThreads; t++){
+            metrics mt("thread" + std::to_string(t));
+            metric.emplace_back(mt);
+        }
 	}
 
 	~WalkManager(){
@@ -100,14 +109,14 @@ public:
 	}
 
 	void writeWalks2Disk(tid_t t, bid_t p){
-		m.start_time("4_writeWalks2Disk_" + std::to_string(t));
+		metric.at(t).start_time("writeWalks2Disk");
 		std::string walksfile = walksname( base_filename, p );
 		int f = open(walksfile.c_str(), O_WRONLY | O_CREAT | O_APPEND, S_IROTH | S_IWOTH | S_IWUSR | S_IRUSR);
 		pwritea( f, &pwalks[t][p][0], pwalks[t][p].size_w*sizeof(WalkDataType) );
 		dwalknum[p] += pwalks[t][p].size_w;
 		pwalks[t][p].size_w = 0;
 		close(f);
-		m.stop_time("4_writeWalks2Disk_" + std::to_string(t));
+		metric.at(t).stop_time("writeWalks2Disk");
 	}
 
 	wid_t getCurrentWalks(bid_t p){

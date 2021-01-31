@@ -95,9 +95,19 @@ metrics runProgram(){
     graphwalker_engine engine(filename, blocksize_kb, nblocks,nmblocks, m);
     engine.run(program, prob);
 
+    metrics_report(m);
+
+    tid_t nThreads = 24;
+    double totTime = 0;
+    for (tid_t t = 0; t < nThreads; t++){
+        auto time = engine.walk_manager->metric.at(t).get("writeWalks2Disk").value;
+        std::cout << "thread" + std::to_string(t) + " writeWalks2Disk: " << time
+                  << "(" << engine.walk_manager->metric.at(t).get("writeWalks2Disk").count << ")" << std::endl;
+        totTime += time;
+    }
+    std::cout << "average writeWalks2Disk time: " << totTime / nThreads << std::endl;
     return m;
 //    /* Report execution metrics */
-//    metrics_report(m);
 }
 
 const std::vector<std::string>itemName{
@@ -138,15 +148,15 @@ public:
         for (const auto& s:itemName){
             double time = 0;
             size_t count = 0;
-            if (s == "4_writeWalks2Disk_"){
-                for (tid_t t = 0; t < nThreads; t++){
-                    time += m.get(s + std::to_string(t)).value;
-                    count += m.get(s + std::to_string(t)).count;
-                }
-            }else{
+//            if (s == "4_writeWalks2Disk_"){
+//                for (tid_t t = 0; t < nThreads; t++){
+//                    time += m.get(s + std::to_string(t)).value;
+//                    count += m.get(s + std::to_string(t)).count;
+//                }
+//            }else{
                 time = m.get(s).value;
                 count = m.get(s).count;
-            }
+//            }
             result.emplace_back(time, count);
         }
     }
